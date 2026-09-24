@@ -304,7 +304,7 @@ fun HomeScreen(
           TopCategoriesCard(
             summary = summary,
             currencySymbol = currencySymbol,
-            onViewAll = { onNavigate(Screen.Insights.route) }
+            onViewAll = { onNavigate(Screen.SpendingDistribution.route) }
           )
         }
       }

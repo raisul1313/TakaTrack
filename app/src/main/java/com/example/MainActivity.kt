@@ -34,6 +34,7 @@ import com.example.ui.screens.accounts.AccountsScreen
 import com.example.ui.screens.addexpense.AddExpenseScreen
 import com.example.ui.screens.addtransaction.AddTransactionSheet
 import com.example.ui.screens.budgets.BudgetsScreen
+import com.example.ui.screens.distribution.SpendingDistributionScreen
 import com.example.ui.screens.home.HomeScreen
 import com.example.ui.screens.insights.InsightsScreen
 import com.example.ui.screens.onboarding.OnboardingScreen
@@ -157,7 +158,10 @@ fun TakaTrackApp(viewModel: ExpenseViewModel) {
       }
 
       composable(Screen.Insights.route) {
-        InsightsScreen(viewModel = viewModel)
+        InsightsScreen(
+          viewModel = viewModel,
+          onNavigate = { route -> navController.navigate(route) }
+        )
       }
 
       composable(Screen.Accounts.route) {
@@ -190,6 +194,16 @@ fun TakaTrackApp(viewModel: ExpenseViewModel) {
         AddExpenseScreen(
           viewModel = viewModel,
           onNavigateBack = { navController.popBackStack() }
+        )
+      }
+
+      composable(Screen.SpendingDistribution.route) {
+        SpendingDistributionScreen(
+          viewModel = viewModel,
+          onNavigateBack = { navController.popBackStack() },
+          onTransactionClick = { tx ->
+            selectedDetailTransaction = tx
+          }
         )
       }
     }

@@ -57,6 +57,7 @@ import com.example.domain.model.TransactionItem
 import com.example.ui.ExpenseViewModel
 import com.example.ui.components.CurrencyFormatter
 import com.example.ui.components.EmptyState
+import com.example.ui.components.ExpenseHistoryList
 import com.example.ui.components.FintechCard
 import com.example.ui.screens.home.HomeTransactionRow
 import java.text.SimpleDateFormat
@@ -337,7 +338,23 @@ fun TransactionsScreen(
       }
 
       // List of transactions grouped by date
-      if (filteredTransactions.isEmpty()) {
+      if (selectedTypeFilter == TransactionType.EXPENSE) {
+        ExpenseHistoryList(
+          expenses = filteredTransactions,
+          currencySymbol = currencySymbol,
+          onExpenseClick = onSelectTransaction,
+          searchQuery = searchQuery,
+          contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+          emptyStateAction = {
+            if (searchQuery.isNotBlank() || selectedAccountId != null) {
+              searchQuery = ""
+              selectedAccountId = null
+            } else {
+              onOpenAddTransaction()
+            }
+          }
+        )
+      } else if (filteredTransactions.isEmpty()) {
         Box(
           modifier = Modifier
             .fillMaxSize()

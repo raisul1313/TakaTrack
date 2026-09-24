@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
@@ -31,6 +32,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,8 +58,10 @@ import com.example.ui.components.CurrencyFormatter
 import com.example.ui.components.DonutChart
 import com.example.ui.components.FintechCard
 import com.example.ui.components.IncomeExpenseBarChart
+import com.example.ui.components.InteractivePieChart
 import com.example.ui.components.SpendingLineChart
 import com.example.ui.components.parseColorHex
+import com.example.ui.navigation.Screen
 import com.example.ui.theme.ExpenseRed
 import com.example.ui.theme.IncomeGreen
 import java.text.SimpleDateFormat
@@ -68,7 +72,8 @@ import java.util.Locale
 @Composable
 fun InsightsScreen(
   viewModel: ExpenseViewModel,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  onNavigate: (String) -> Unit = {}
 ) {
   val transactions by viewModel.allTransactions.collectAsStateWithLifecycle()
   val categories by viewModel.allCategories.collectAsStateWithLifecycle()
@@ -289,23 +294,51 @@ fun InsightsScreen(
     item {
       FintechCard(modifier = Modifier.fillMaxWidth()) {
         Column {
-          Text(
-            text = "Spending by Category",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-          )
-          Text(
-            text = "Total: ${CurrencyFormatter.format(totalSpentInPeriod, currencySymbol)}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-          )
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+          ) {
+            Column {
+              Text(
+                text = "Spending by Category",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+              )
+              Text(
+                text = "Total: ${CurrencyFormatter.format(totalSpentInPeriod, currencySymbol)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+              )
+            }
+
+            TextButton(
+              onClick = { onNavigate(Screen.SpendingDistribution.route) },
+              modifier = Modifier.testTag("btn_view_full_pie_chart")
+            ) {
+              Text(
+                text = "Full Chart",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+              )
+              Spacer(modifier = Modifier.width(4.dp))
+              Icon(
+                imageVector = Icons.Default.PieChart,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.primary
+              )
+            }
+          }
 
           Spacer(modifier = Modifier.height(16.dp))
 
-          DonutChart(
+          InteractivePieChart(
             categories = categorySpendingList,
-            currencySymbol = currencySymbol
+            currencySymbol = currencySymbol,
+            chartSize = 210.dp
           )
         }
       }
